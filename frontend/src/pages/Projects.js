@@ -1,13 +1,33 @@
-import React from 'react';
-import { ExternalLink, Github, Star, Calendar } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ExternalLink, Github, Star, Calendar, Loader2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { mockProjects } from '../utils/mock';
+import { projectsAPI } from '../services/api';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 
 const Projects = () => {
   const { language } = useLanguage();
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const data = await projectsAPI.getAll();
+        setProjects(data);
+      } catch (err) {
+        console.error('Error fetching projects:', err);
+        setError('Failed to load projects');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const content = {
     en: {
