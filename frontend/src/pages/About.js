@@ -111,68 +111,80 @@ const About = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-20">
-          {/* Profile Section */}
-          <div className="lg:col-span-1">
-            <Card className="rounded-2xl border-0 shadow-lg bg-white dark:bg-gray-800 text-center">
-              <CardContent className="p-8">
-                <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mx-auto mb-6 flex items-center justify-center">
-                  <Code className="w-16 h-16 text-white" />
-                </div>
-                
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                  {mockPersonalInfo.name}
-                </h2>
-                
-                <div className="flex items-center justify-center text-gray-600 dark:text-gray-400 mb-4">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  <span>{mockPersonalInfo.location[language]}</span>
-                </div>
-                
-                <div className="flex items-center justify-center text-blue-600 dark:text-blue-400 mb-6">
-                  <Mail className="w-4 h-4 mr-2" />
-                  <span className="text-sm">{mockPersonalInfo.email}</span>
-                </div>
-                
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
-                  {language === 'en' ? 'Download Resume' : 'Télécharger CV'}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+          {loading ? (
+            <div className="col-span-full flex justify-center items-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" />
+            </div>
+          ) : error ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-red-600 dark:text-red-400">{error}</p>
+            </div>
+          ) : profile ? (
+            <>
+              {/* Profile Section */}
+              <div className="lg:col-span-1">
+                <Card className="rounded-2xl border-0 shadow-lg bg-white dark:bg-gray-800 text-center">
+                  <CardContent className="p-8">
+                    <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mx-auto mb-6 flex items-center justify-center">
+                      <Code className="w-16 h-16 text-white" />
+                    </div>
+                    
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                      {profile.name}
+                    </h2>
+                    
+                    <div className="flex items-center justify-center text-gray-600 dark:text-gray-400 mb-4">
+                      <MapPin className="w-4 h-4 mr-2" />
+                      <span>{profile.location[language]}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-center text-blue-600 dark:text-blue-400 mb-6">
+                      <Mail className="w-4 h-4 mr-2" />
+                      <span className="text-sm">{profile.email}</span>
+                    </div>
+                    
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+                      {language === 'en' ? 'Download Resume' : 'Télécharger CV'}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
 
-          {/* Content Section */}
-          <div className="lg:col-span-2 space-y-12">
-            {/* Bio Section */}
-            <Card className="rounded-2xl border-0 shadow-lg bg-white dark:bg-gray-800">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                  {content[language].journey.title}
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-                  {mockPersonalInfo.bio[language]}
-                </p>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {content[language].journey.content}
-                </p>
-              </CardContent>
-            </Card>
+              {/* Content Section */}
+              <div className="lg:col-span-2 space-y-12">
+                {/* Bio Section */}
+                <Card className="rounded-2xl border-0 shadow-lg bg-white dark:bg-gray-800">
+                  <CardContent className="p-8">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                      {content[language].journey.title}
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                      {profile.bio[language]}
+                    </p>
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                      {content[language].journey.content}
+                    </p>
+                  </CardContent>
+                </Card>
 
-            {/* Skills Section */}
-            <Card className="rounded-2xl border-0 shadow-lg bg-white dark:bg-gray-800">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                  {content[language].skills}
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  {mockPersonalInfo.skills.map((skill) => (
-                    <Badge key={skill} variant="outline" className="px-4 py-2 text-sm rounded-full">
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                {/* Skills Section */}
+                <Card className="rounded-2xl border-0 shadow-lg bg-white dark:bg-gray-800">
+                  <CardContent className="p-8">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                      {content[language].skills}
+                    </h3>
+                    <div className="flex flex-wrap gap-3">
+                      {profile.skills.map((skill) => (
+                        <Badge key={skill} variant="outline" className="px-4 py-2 text-sm rounded-full">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </>
+          ) : null}
         </div>
 
         {/* Values Section */}
