@@ -141,42 +141,52 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {mockProjects.map((project) => (
-              <Card key={project.id} className="group hover:shadow-xl transition-all duration-300 rounded-xl border-0 shadow-lg bg-white dark:bg-gray-900">
-                <CardContent className="p-8">
-                  <div className="flex items-center mb-4">
-                    <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg mr-4">
-                      <CheckCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" />
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-600 dark:text-red-400">{error}</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {projects.map((project) => (
+                <Card key={project.id} className="group hover:shadow-xl transition-all duration-300 rounded-xl border-0 shadow-lg bg-white dark:bg-gray-900">
+                  <CardContent className="p-8">
+                    <div className="flex items-center mb-4">
+                      <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg mr-4">
+                        <CheckCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white">{project.name}</h3>
+                        <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">{project.type}</span>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">{project.name}</h3>
-                      <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">{project.type}</span>
+                    
+                    <p className="text-gray-600 dark:text-gray-300 mb-6">
+                      {project.description[language]}
+                    </p>
+                    
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {project.technologies.slice(0, 3).map((tech) => (
+                        <span key={tech} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm">
+                          {tech}
+                        </span>
+                      ))}
                     </div>
-                  </div>
-                  
-                  <p className="text-gray-600 dark:text-gray-300 mb-6">
-                    {project.description[language]}
-                  </p>
-                  
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {project.technologies.slice(0, 3).map((tech) => (
-                      <span key={tech} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                  
-                  <Link to="/projects">
-                    <Button variant="outline" className="w-full group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 rounded-lg">
-                      {language === 'en' ? 'View Details' : 'Voir les Détails'}
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                    
+                    <Link to="/projects">
+                      <Button variant="outline" className="w-full group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 rounded-lg">
+                        {language === 'en' ? 'View Details' : 'Voir les Détails'}
+                        <ArrowRight className="ml-2 w-4 h-4" />
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -192,33 +202,39 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {mockTestimonials.map((testimonial) => (
-              <Card key={testimonial.id} className="rounded-xl border-0 shadow-lg bg-gray-50 dark:bg-gray-800">
-                <CardContent className="p-8">
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mr-4">
-                      <Users className="w-6 h-6 text-white" />
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {testimonials.map((testimonial) => (
+                <Card key={testimonial.id} className="rounded-xl border-0 shadow-lg bg-gray-50 dark:bg-gray-800">
+                  <CardContent className="p-8">
+                    <div className="flex items-center mb-4">
+                      <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mr-4">
+                        <Users className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-gray-900 dark:text-white">{testimonial.name}</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{testimonial.role[language]}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-bold text-gray-900 dark:text-white">{testimonial.name}</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{testimonial.role[language]}</p>
+                    
+                    <p className="text-gray-700 dark:text-gray-300 italic">
+                      "{testimonial.content[language]}"
+                    </p>
+                    
+                    <div className="flex mt-4">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <div key={i} className="w-5 h-5 text-yellow-400 fill-current">★</div>
+                      ))}
                     </div>
-                  </div>
-                  
-                  <p className="text-gray-700 dark:text-gray-300 italic">
-                    "{testimonial.content[language]}"
-                  </p>
-                  
-                  <div className="flex mt-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <div key={i} className="w-5 h-5 text-yellow-400 fill-current">★</div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>
