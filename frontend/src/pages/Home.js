@@ -1,13 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles, Users, CheckCircle } from 'lucide-react';
+import { ArrowRight, Sparkles, Users, CheckCircle, Loader2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { mockProjects, mockTestimonials } from '../utils/mock';
+import { projectsAPI, testimonialsAPI } from '../services/api';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 
 const Home = () => {
   const { language } = useLanguage();
+  const [projects, setProjects] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [projectsData, testimonialsData] = await Promise.all([
+          projectsAPI.getAll(),
+          testimonialsAPI.getAll()
+        ]);
+        
+        setProjects(projectsData.filter(p => p.featured));
+        setTestimonials(testimonialsData.filter(t => t.featured));
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('Failed to load data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const content = {
     en: {
