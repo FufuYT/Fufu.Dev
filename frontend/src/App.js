@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from './contexts/LanguageContext';
+import { Toaster } from './components/ui/toaster';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -27,6 +28,7 @@ function App() {
               </Routes>
             </main>
             <Footer />
+            <Toaster />
           </div>
         </LanguageProvider>
       </BrowserRouter>
