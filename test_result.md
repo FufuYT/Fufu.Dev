@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the FufuDev portfolio backend API endpoints comprehensively including health check, projects, services, profile, testimonials, contact form APIs, and error handling"
+user_problem_statement: "Test the complete FufuDev portfolio website frontend integration comprehensively including homepage, projects, services, about, contact pages, navigation, language toggle, responsive design, and backend integration"
 
 backend:
   - task: "API Health Check"
