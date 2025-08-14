@@ -65,80 +65,96 @@ const Projects = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {mockProjects.map((project) => (
-            <Card key={project.id} className="group hover:shadow-2xl transition-all duration-300 rounded-2xl border-0 shadow-lg bg-white dark:bg-gray-800 overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 p-8">
-                <div className="flex items-center justify-between mb-4">
-                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {project.name}
-                  </CardTitle>
-                  <Badge 
-                    variant={project.status === 'active' ? 'default' : 'secondary'}
-                    className={`${
-                      project.status === 'active' 
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
-                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-                    } rounded-full px-3 py-1`}
-                  >
-                    <Star className="w-3 h-3 mr-1" />
-                    {project.status === 'active' ? content[language].active : content[language].completed}
-                  </Badge>
-                </div>
-                
-                <div className="flex items-center text-gray-600 dark:text-gray-400 mb-2">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  <span className="text-sm">{project.type}</span>
-                </div>
-              </CardHeader>
-
-              <CardContent className="p-8">
-                <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
-                  {project.description[language]}
-                </p>
-
-                <div className="mb-8">
-                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-                    {content[language].technologies}:
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.map((tech) => (
-                      <Badge key={tech} variant="outline" className="rounded-full px-3 py-1 text-sm">
-                        {tech}
-                      </Badge>
-                    ))}
+          {loading ? (
+            <div className="col-span-full flex justify-center items-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" />
+            </div>
+          ) : error ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-red-600 dark:text-red-400">{error}</p>
+            </div>
+          ) : projects.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-600 dark:text-gray-400">
+                {language === 'en' ? 'No projects found.' : 'Aucun projet trouvé.'}
+              </p>
+            </div>
+          ) : (
+            projects.map((project) => (
+              <Card key={project.id} className="group hover:shadow-2xl transition-all duration-300 rounded-2xl border-0 shadow-lg bg-white dark:bg-gray-800 overflow-hidden">
+                <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 p-8">
+                  <div className="flex items-center justify-between mb-4">
+                    <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {project.name}
+                    </CardTitle>
+                    <Badge 
+                      variant={project.status === 'active' ? 'default' : 'secondary'}
+                      className={`${
+                        project.status === 'active' 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                      } rounded-full px-3 py-1`}
+                    >
+                      <Star className="w-3 h-3 mr-1" />
+                      {project.status === 'active' ? content[language].active : content[language].completed}
+                    </Badge>
                   </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center justify-center rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
-                    disabled
-                  >
-                    <Github className="w-4 h-4 mr-2" />
-                    {content[language].viewCode}
-                  </Button>
                   
-                  <Button 
-                    className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center"
-                    disabled
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    {content[language].liveDemo}
-                  </Button>
-                </div>
+                  <div className="flex items-center text-gray-600 dark:text-gray-400 mb-2">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    <span className="text-sm">{project.type}</span>
+                  </div>
+                </CardHeader>
 
-                <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <p className="text-sm text-blue-700 dark:text-blue-300">
-                    {language === 'en' 
-                      ? "This project is part of my Discord bot development portfolio. Contact me for more details or custom bot development."
-                      : "Ce projet fait partie de mon portfolio de développement de bots Discord. Contactez-moi pour plus de détails ou pour le développement de bots personnalisés."
-                    }
+                <CardContent className="p-8">
+                  <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
+                    {project.description[language]}
                   </p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+
+                  <div className="mb-8">
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                      {content[language].technologies}:
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {project.technologies.map((tech) => (
+                        <Badge key={tech} variant="outline" className="rounded-full px-3 py-1 text-sm">
+                          {tech}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center justify-center rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                      disabled
+                    >
+                      <Github className="w-4 h-4 mr-2" />
+                      {content[language].viewCode}
+                    </Button>
+                    
+                    <Button 
+                      className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center"
+                      disabled
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      {content[language].liveDemo}
+                    </Button>
+                  </div>
+
+                  <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      {language === 'en' 
+                        ? "This project is part of my Discord bot development portfolio. Contact me for more details or custom bot development."
+                        : "Ce projet fait partie de mon portfolio de développement de bots Discord. Contactez-moi pour plus de détails ou pour le développement de bots personnalisés."
+                      }
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
 
         {/* Call to Action */}
