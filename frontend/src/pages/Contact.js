@@ -101,24 +101,33 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast({
-        title: language === 'en' ? "Message Sent!" : "Message Envoyé !",
-        description: language === 'en' 
-          ? "Thank you for your message. I'll get back to you soon!"
-          : "Merci pour votre message. Je vous répondrai bientôt !",
-      });
+      const contactData = {
+        ...formData,
+        language
+      };
 
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
-      });
+      const result = await contactAPI.submit(contactData);
+      
+      if (result.success) {
+        toast({
+          title: language === 'en' ? "Message Sent!" : "Message Envoyé !",
+          description: language === 'en' 
+            ? "Thank you for your message. I'll get back to you soon!"
+            : "Merci pour votre message. Je vous répondrai bientôt !",
+        });
+
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+      } else {
+        throw new Error(result.message || 'Failed to send message');
+      }
     } catch (error) {
+      console.error('Contact form error:', error);
       toast({
         title: language === 'en' ? "Error" : "Erreur",
         description: language === 'en' 
