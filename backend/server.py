@@ -150,6 +150,177 @@ async def get_testimonials():
     testimonials = await db.testimonials.find({"approved": True}).to_list(100)
     return [Testimonial(**testimonial) for testimonial in testimonials]
 
+# Seed data function
+async def seed_database():
+    """Initialize database with default data"""
+    
+    # Check if data already exists
+    existing_projects = await db.projects.count_documents({})
+    if existing_projects > 0:
+        logging.info("Database already seeded, skipping...")
+        return
+    
+    # Seed Projects
+    projects_data = [
+        {
+            "id": str(uuid.uuid4()),
+            "name": "FufuBot",
+            "description": {
+                "en": "Advanced Discord bot with moderation, music playback, and custom commands. Built with Discord.js and Node.js.",
+                "fr": "Bot Discord avancé avec modération, lecture de musique et commandes personnalisées. Construit avec Discord.js et Node.js."
+            },
+            "technologies": ["Discord.js", "Node.js", "JavaScript", "MongoDB"],
+            "status": "active",
+            "type": "Discord Bot",
+            "featured": True,
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Amazon Checker",
+            "description": {
+                "en": "Automated Discord bot that monitors Amazon product prices and sends notifications. Features real-time price tracking and alerts.",
+                "fr": "Bot Discord automatisé qui surveille les prix des produits Amazon et envoie des notifications. Fonctionnalités de suivi des prix en temps réel et d'alertes."
+            },
+            "technologies": ["Discord.js", "Python", "Amazon API", "Web Scraping"],
+            "status": "active",
+            "type": "Discord Bot",
+            "featured": True,
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+    ]
+    
+    # Seed Services
+    services_data = [
+        {
+            "id": str(uuid.uuid4()),
+            "title": {
+                "en": "Web Development",
+                "fr": "Développement Web"
+            },
+            "description": {
+                "en": "Modern, responsive websites and web applications using the latest technologies.",
+                "fr": "Sites web et applications web modernes et réactifs utilisant les dernières technologies."
+            },
+            "icon": "Globe",
+            "active": True,
+            "order": 1,
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "title": {
+                "en": "Discord Bots",
+                "fr": "Bots Discord"
+            },
+            "description": {
+                "en": "Custom Discord bots with moderation, automation, and entertainment features.",
+                "fr": "Bots Discord personnalisés avec des fonctionnalités de modération, d'automatisation et de divertissement."
+            },
+            "icon": "Bot",
+            "active": True,
+            "order": 2,
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "title": {
+                "en": "Automation Tools",
+                "fr": "Outils d'Automatisation"
+            },
+            "description": {
+                "en": "Scripts and tools to automate repetitive tasks and improve productivity.",
+                "fr": "Scripts et outils pour automatiser les tâches répétitives et améliorer la productivité."
+            },
+            "icon": "Settings",
+            "active": True,
+            "order": 3,
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "title": {
+                "en": "API Integration",
+                "fr": "Intégration d'API"
+            },
+            "description": {
+                "en": "Seamless integration of third-party APIs and services into your applications.",
+                "fr": "Intégration transparente d'API et de services tiers dans vos applications."
+            },
+            "icon": "Plug",
+            "active": True,
+            "order": 4,
+            "created_at": datetime.utcnow()
+        }
+    ]
+    
+    # Seed Profile
+    profile_data = {
+        "id": "profile",
+        "name": "FufuDev",
+        "email": "b22041702@gmail.com",
+        "bio": {
+            "en": "Passionate developer specializing in web development and Discord bot creation. I love building innovative solutions that solve real-world problems and enhance user experiences.",
+            "fr": "Développeur passionné spécialisé dans le développement web et la création de bots Discord. J'aime créer des solutions innovantes qui résolvent des problèmes du monde réel et améliorent l'expérience utilisateur."
+        },
+        "skills": ["JavaScript", "Python", "Node.js", "React", "MongoDB", "Discord.js", "Web Scraping", "API Integration"],
+        "location": {
+            "en": "Available for remote work",
+            "fr": "Disponible pour le travail à distance"
+        },
+        "social_links": {},
+        "updated_at": datetime.utcnow()
+    }
+    
+    # Seed Testimonials
+    testimonials_data = [
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Alex Johnson",
+            "role": {
+                "en": "Community Manager",
+                "fr": "Gestionnaire de Communauté"
+            },
+            "content": {
+                "en": "FufuBot transformed our Discord server! The moderation features and custom commands work perfectly.",
+                "fr": "FufuBot a transformé notre serveur Discord ! Les fonctionnalités de modération et les commandes personnalisées fonctionnent parfaitement."
+            },
+            "rating": 5,
+            "approved": True,
+            "featured": True,
+            "created_at": datetime.utcnow()
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "name": "Sarah Miller",
+            "role": {
+                "en": "E-commerce Owner",
+                "fr": "Propriétaire E-commerce"
+            },
+            "content": {
+                "en": "The Amazon Checker bot helped me track competitor prices effortlessly. Great automation tool!",
+                "fr": "Le bot Amazon Checker m'a aidé à suivre les prix des concurrents sans effort. Excellent outil d'automatisation !"
+            },
+            "rating": 5,
+            "approved": True,
+            "featured": True,
+            "created_at": datetime.utcnow()
+        }
+    ]
+    
+    # Insert all data
+    try:
+        await db.projects.insert_many(projects_data)
+        await db.services.insert_many(services_data)
+        await db.profiles.insert_one(profile_data)
+        await db.testimonials.insert_many(testimonials_data)
+        
+        logging.info("Database seeded successfully!")
+    except Exception as e:
+        logging.error(f"Error seeding database: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
