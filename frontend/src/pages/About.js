@@ -1,13 +1,33 @@
-import React from 'react';
-import { Code, Heart, Coffee, Award, MapPin, Mail } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Code, Heart, Coffee, Award, MapPin, Mail, Loader2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { mockPersonalInfo } from '../utils/mock';
+import { profileAPI } from '../services/api';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 
 const About = () => {
   const { language } = useLanguage();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const data = await profileAPI.get();
+        setProfile(data);
+      } catch (err) {
+        console.error('Error fetching profile:', err);
+        setError('Failed to load profile');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const content = {
     en: {
