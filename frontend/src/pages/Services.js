@@ -124,35 +124,45 @@ const Services = () => {
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-20">
-          {mockServices.map((service) => {
-            const IconComponent = iconMap[service.icon];
-            
-            return (
-              <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 rounded-2xl border-0 shadow-lg bg-white dark:bg-gray-800">
-                <CardHeader className="text-center p-8">
-                  <div className="mx-auto mb-6 p-4 bg-blue-100 dark:bg-blue-900/30 rounded-2xl w-fit group-hover:scale-110 transition-transform duration-300">
-                    <IconComponent className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                    {service.title[language]}
-                  </CardTitle>
-                </CardHeader>
-                
-                <CardContent className="px-8 pb-8">
-                  <p className="text-gray-600 dark:text-gray-300 text-center mb-8 leading-relaxed">
-                    {service.description[language]}
-                  </p>
+          {loading ? (
+            <div className="col-span-full flex justify-center items-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400" />
+            </div>
+          ) : error ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-red-600 dark:text-red-400">{error}</p>
+            </div>
+          ) : (
+            services.map((service) => {
+              const IconComponent = iconMap[service.icon];
+              
+              return (
+                <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 rounded-2xl border-0 shadow-lg bg-white dark:bg-gray-800">
+                  <CardHeader className="text-center p-8">
+                    <div className="mx-auto mb-6 p-4 bg-blue-100 dark:bg-blue-900/30 rounded-2xl w-fit group-hover:scale-110 transition-transform duration-300">
+                      <IconComponent className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                      {service.title[language]}
+                    </CardTitle>
+                  </CardHeader>
                   
-                  <Button 
-                    variant="outline" 
-                    className="w-full group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 rounded-lg"
-                  >
-                    {content[language].getQuote}
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
+                  <CardContent className="px-8 pb-8">
+                    <p className="text-gray-600 dark:text-gray-300 text-center mb-8 leading-relaxed">
+                      {service.description[language]}
+                    </p>
+                    
+                    <Button 
+                      variant="outline" 
+                      className="w-full group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 rounded-lg"
+                    >
+                      {content[language].getQuote}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })
+          )}
         </div>
 
         {/* Features Section */}
