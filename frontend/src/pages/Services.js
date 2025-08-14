@@ -1,12 +1,32 @@
-import React from 'react';
-import { Globe, Bot, Settings, Plug, Check, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Globe, Bot, Settings, Plug, Check, Star, Loader2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { mockServices } from '../utils/mock';
+import { servicesAPI } from '../services/api';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
 const Services = () => {
   const { language } = useLanguage();
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setLoading(true);
+        const data = await servicesAPI.getAll();
+        setServices(data);
+      } catch (err) {
+        console.error('Error fetching services:', err);
+        setError('Failed to load services');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   const iconMap = {
     Globe,
