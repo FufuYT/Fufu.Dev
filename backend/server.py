@@ -2,31 +2,25 @@ from fastapi import FastAPI, APIRouter, HTTPException
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
-import os
-import logging
 from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict
-import uuid
+import uuid, os, logging, json
 from datetime import datetime
 
-
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+load_dotenv(ROOT_DIR / ".env")
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
+# MongoDB Atlas connection
+mongo_url = os.environ["MONGO_URL"]
+db_name = os.environ["DB_NAME"]
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[db_name]
 
-# Create the main app without a prefix
 app = FastAPI(title="FufuDev Portfolio API", version="1.0.0")
-
-# Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
-
-# Define Models
+# ----- MODELS -----
 class Contact(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
@@ -91,52 +85,27 @@ class Testimonial(BaseModel):
     featured: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-# API Routes
+# ----- API ROUTES -----
 @api_router.get("/")
 async def root():
     return {"message": "FufuDev Portfolio API", "version": "1.0.0"}
 
-# Contact endpoints
 @api_router.post("/contact", response_model=dict)
 async def create_contact(contact_data: ContactCreate):
-    try:
-        contact = Contact(**contact_data.dict())
-        result = await db.contacts.insert_one(contact.dict())
-        
-        return {
-            "success": True,
-            "message": "Message sent successfully!",
-            "id": contact.id
-        }
-    except Exception as e:
-        logging.error(f"Error creating contact: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to send message")
+    contact = Contact(**contact_data.dict())
+    await db.contacts.insert_one(contact.dict())
+    return {"success": True, "message": "Message sent!", "id": contact.id}
 
-@api_router.get("/contacts", response_model=List[Contact])
-async def get_contacts():
-    contacts = await db.contacts.find().sort("created_at", -1).to_list(100)
-    return [Contact(**contact) for contact in contacts]
-
-# Projects endpoints
 @api_router.get("/projects", response_model=List[Project])
 async def get_projects():
     projects = await db.projects.find({"status": "active"}).to_list(100)
-    return [Project(**project) for project in projects]
+    return [Project(**p) for p in projects]
 
-@api_router.get("/projects/{project_id}", response_model=Project)
-async def get_project(project_id: str):
-    project = await db.projects.find_one({"id": project_id})
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-    return Project(**project)
-
-# Services endpoints
 @api_router.get("/services", response_model=List[Service])
 async def get_services():
     services = await db.services.find({"active": True}).sort("order", 1).to_list(100)
-    return [Service(**service) for service in services]
+    return [Service(**s) for s in services]
 
-# Profile endpoints
 @api_router.get("/profile", response_model=Profile)
 async def get_profile():
     profile = await db.profiles.find_one({"id": "profile"})
@@ -144,33 +113,27 @@ async def get_profile():
         raise HTTPException(status_code=404, detail="Profile not found")
     return Profile(**profile)
 
-# Testimonials endpoints
 @api_router.get("/testimonials", response_model=List[Testimonial])
 async def get_testimonials():
     testimonials = await db.testimonials.find({"approved": True}).to_list(100)
-    return [Testimonial(**testimonial) for testimonial in testimonials]
+    return [Testimonial(**t) for t in testimonials]
 
-import json
-
+# ----- SEED DATABASE -----
 async def seed_database():
-    """Initialize database with default data from data.json"""
-    
-    # Vérifie si les collections sont déjà remplies
     existing_projects = await db.projects.count_documents({})
-    existing_services = await db.services.count_documents({})
-    existing_profiles = await db.profiles.count_documents({})
-    existing_testimonials = await db.testimonials.count_documents({})
-    
-    if existing_projects > 0 or existing_services > 0 or existing_profiles > 0 or existing_testimonials > 0:
+    if existing_projects > 0:
         logging.info("Database already seeded, skipping...")
         return
 
-    data_file = ROOT_DIR.parent / "frontend" / "data" / "data.json"
-    
+    data_file = ROOT_DIR / "frontend/data/data.json"
+    if not data_file.exists():
+        logging.error("data.json file not found!")
+        return
+
+    with open(data_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
     try:
-        with open(data_file, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        
         if "projects" in data:
             await db.projects.insert_many(data["projects"])
         if "services" in data:
@@ -179,28 +142,21 @@ async def seed_database():
             await db.profiles.insert_one(data["profile"])
         if "testimonials" in data:
             await db.testimonials.insert_many(data["testimonials"])
-        
-        logging.info("Database seeded successfully from JSON!")
+        logging.info("Database seeded successfully from data.json!")
     except Exception as e:
-        logging.error(f"Error seeding database from JSON: {str(e)}")
+        logging.error(f"Error seeding database: {e}")
 
-
-# Include the router in the main app
+# ----- APP SETUP -----
 app.include_router(api_router)
-
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 @app.on_event("startup")
