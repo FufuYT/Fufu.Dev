@@ -11,12 +11,13 @@ from datetime import datetime
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
-print("MONGO_URL =", os.environ.get("MONGO_URL"))
-# MongoDB Atlas connection
 mongo_url = os.environ["MONGO_URL"]
 db_name = os.environ["DB_NAME"]
-client = AsyncIOMotorClient(mongo_url)
+
+client = AsyncIOMotorClient(mongo_url, tls=True)
 db = client[db_name]
+
+print("Connexion MongoDB OK !")
 
 app = FastAPI(title="FufuDev Portfolio API", version="1.0.0")
 api_router = APIRouter(prefix="/api")
