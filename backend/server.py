@@ -11,6 +11,7 @@ from datetime import datetime
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
+print("MONGO_URL =", os.environ.get("MONGO_URL"))
 # MongoDB Atlas connection
 mongo_url = os.environ["MONGO_URL"]
 db_name = os.environ["DB_NAME"]
