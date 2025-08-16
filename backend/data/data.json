@@ -1,0 +1,143 @@
+{
+  "profile": {
+    "id": "profile",
+    "name": "FufuDev",
+    "email": "b22041702@gmail.com",
+    "bio": {
+      "en": "Passionate developer specializing in web development and Discord bot creation. I love building innovative solutions that solve real-world problems and enhance user experiences.",
+      "fr": "Développeur passionné spécialisé dans le développement web et la création de bots Discord. J'aime créer des solutions innovantes qui résolvent des problèmes du monde réel et améliorent l'expérience utilisateur."
+    },
+    "skills": ["JavaScript", "Python", "Node.js", "React", "MongoDB", "Discord.js", "Web Scraping", "API Integration"],
+    "location": {
+      "en": "Available for remote work",
+      "fr": "Disponible pour le travail à distance"
+    },
+    "avatar_url": null,
+    "resume_url": null,
+    "social_links": {},
+    "updated_at": "2025-01-01T00:00:00Z"
+  },
+
+  "projects": [
+    {
+      "id": "7a3f2f2a-9c2e-4a8b-9a2e-4f7e9d1a1111",
+      "name": "FufuBot",
+      "description": {
+        "en": "Advanced Discord bot with moderation, music playback, and custom commands. Built with Discord.js and Node.js.",
+        "fr": "Bot Discord avancé avec modération, lecture de musique et commandes personnalisées. Construit avec Discord.js et Node.js."
+      },
+      "technologies": ["Discord.js", "Node.js", "JavaScript", "MongoDB"],
+      "status": "active",
+      "type": "Discord Bot",
+      "github_url": null,
+      "demo_url": null,
+      "image_url": null,
+      "featured": true,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "c0e3f8b4-6c1a-4c2f-9a7d-2a0f4e2b2222",
+      "name": "Amazon Checker",
+      "description": {
+        "en": "Automated Discord bot that monitors Amazon product prices and sends notifications. Features real-time price tracking and alerts.",
+        "fr": "Bot Discord automatisé qui surveille les prix des produits Amazon et envoie des notifications. Fonctionnalités de suivi des prix en temps réel et d'alertes."
+      },
+      "technologies": ["Discord.js", "Python", "Amazon API", "Web Scraping"],
+      "status": "active",
+      "type": "Discord Bot",
+      "github_url": null,
+      "demo_url": null,
+      "image_url": null,
+      "featured": true,
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    }
+  ],
+
+  "services": [
+    {
+      "id": "a1b2c3d4-0001-4e5f-8a9b-000000000001",
+      "title": { "en": "Web Development", "fr": "Développement Web" },
+      "description": {
+        "en": "Modern, responsive websites and web applications using the latest technologies.",
+        "fr": "Sites web et applications web modernes et réactifs utilisant les dernières technologies."
+      },
+      "icon": "Globe",
+      "active": true,
+      "order": 1,
+      "created_at": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "a1b2c3d4-0002-4e5f-8a9b-000000000002",
+      "title": { "en": "Discord Bots", "fr": "Bots Discord" },
+      "description": {
+        "en": "Custom Discord bots with moderation, automation, and entertainment features.",
+        "fr": "Bots Discord personnalisés avec des fonctionnalités de modération, d'automatisation et de divertissement."
+      },
+      "icon": "Bot",
+      "active": true,
+      "order": 2,
+      "created_at": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "a1b2c3d4-0003-4e5f-8a9b-000000000003",
+      "title": { "en": "Automation Tools", "fr": "Outils d'Automatisation" },
+      "description": {
+        "en": "Scripts and tools to automate repetitive tasks and improve productivity.",
+        "fr": "Scripts et outils pour automatiser les tâches répétitives et améliorer la productivité."
+      },
+      "icon": "Settings",
+      "active": true,
+      "order": 3,
+      "created_at": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "a1b2c3d4-0004-4e5f-8a9b-000000000004",
+      "title": { "en": "API Integration", "fr": "Intégration d'API" },
+      "description": {
+        "en": "Seamless integration of third-party APIs and services into your applications.",
+        "fr": "Intégration transparente d'API et de services tiers dans vos applications."
+      },
+      "icon": "Plug",
+      "active": true,
+      "order": 4,
+      "created_at": "2025-01-01T00:00:00Z"
+    }
+  ],
+
+  "testimonials": [
+    {
+      "id": "11111111-2222-3333-4444-555555555555",
+      "name": "Alex Johnson",
+      "role": { "en": "Community Manager", "fr": "Gestionnaire de Communauté" },
+      "content": {
+        "en": "FufuBot transformed our Discord server! The moderation features and custom commands work perfectly.",
+        "fr": "FufuBot a transformé notre serveur Discord ! Les fonctionnalités de modération et les commandes personnalisées fonctionnent parfaitement."
+      },
+      "rating": 5,
+      "company": null,
+      "avatar_url": null,
+      "approved": true,
+      "featured": true,
+      "created_at": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "66666666-7777-8888-9999-000000000000",
+      "name": "Sarah Miller",
+      "role": { "en": "E-commerce Owner", "fr": "Propriétaire E-commerce" },
+      "content": {
+        "en": "The Amazon Checker bot helped me track competitor prices effortlessly. Great automation tool!",
+        "fr": "Le bot Amazon Checker m'a aidé à suivre les prix des concurrents sans effort. Excellent outil d'automatisation !"
+      },
+      "rating": 5,
+      "company": null,
+      "avatar_url": null,
+      "approved": true,
+      "featured": true,
+      "created_at": "2025-01-01T00:00:00Z"
+    }
+  ],
+
+  "contacts": []
+}
