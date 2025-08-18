@@ -1,7 +1,6 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict
@@ -9,15 +8,9 @@ import uuid, os, logging, json
 from datetime import datetime
 
 ROOT_DIR = Path(__file__).parent
+DATA_FILE = ROOT_DIR / "data/data.json"
+
 load_dotenv(ROOT_DIR / ".env")
-
-mongo_url = os.environ["MONGO_URL"]
-db_name = os.environ["DB_NAME"]
-
-client = AsyncIOMotorClient(mongo_url, tls=True)
-db = client[db_name]
-
-print("Connexion MongoDB OK !")
 
 app = FastAPI(title="FufuDev Portfolio API", version="1.0.0")
 api_router = APIRouter(prefix="/api")
@@ -87,6 +80,19 @@ class Testimonial(BaseModel):
     featured: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+# ----- DATA LOADING -----
+def load_data():
+    if not DATA_FILE.exists():
+        return {"projects": [], "services": [], "profile": None, "testimonials": [], "contacts": []}
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_data(data: dict):
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False, default=str)
+
+db_data = load_data()
+
 # ----- API ROUTES -----
 @api_router.get("/")
 async def root():
@@ -95,58 +101,32 @@ async def root():
 @api_router.post("/contact", response_model=dict)
 async def create_contact(contact_data: ContactCreate):
     contact = Contact(**contact_data.dict())
-    await db.contacts.insert_one(contact.dict())
+    db_data["contacts"].append(contact.dict())
+    save_data(db_data)
     return {"success": True, "message": "Message sent!", "id": contact.id}
 
 @api_router.get("/projects", response_model=List[Project])
 async def get_projects():
-    projects = await db.projects.find({"status": "active"}).to_list(100)
-    return [Project(**p) for p in projects]
+    return [Project(**p) for p in db_data.get("projects", []) if p.get("status") == "active"]
 
 @api_router.get("/services", response_model=List[Service])
 async def get_services():
-    services = await db.services.find({"active": True}).sort("order", 1).to_list(100)
-    return [Service(**s) for s in services]
+    services = sorted(
+        [Service(**s) for s in db_data.get("services", []) if s.get("active")],
+        key=lambda x: x.order
+    )
+    return services
 
 @api_router.get("/profile", response_model=Profile)
 async def get_profile():
-    profile = await db.profiles.find_one({"id": "profile"})
+    profile = db_data.get("profile")
     if not profile:
         raise HTTPException(status_code=404, detail="Profile not found")
     return Profile(**profile)
 
 @api_router.get("/testimonials", response_model=List[Testimonial])
 async def get_testimonials():
-    testimonials = await db.testimonials.find({"approved": True}).to_list(100)
-    return [Testimonial(**t) for t in testimonials]
-
-# ----- SEED DATABASE -----
-async def seed_database():
-    existing_projects = await db.projects.count_documents({})
-    if existing_projects > 0:
-        logging.info("Database already seeded, skipping...")
-        return
-
-    data_file = ROOT_DIR / "frontend/data/data.json"
-    if not data_file.exists():
-        logging.error("data.json file not found!")
-        return
-
-    with open(data_file, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    try:
-        if "projects" in data:
-            await db.projects.insert_many(data["projects"])
-        if "services" in data:
-            await db.services.insert_many(data["services"])
-        if "profile" in data:
-            await db.profiles.insert_one(data["profile"])
-        if "testimonials" in data:
-            await db.testimonials.insert_many(data["testimonials"])
-        logging.info("Database seeded successfully from data.json!")
-    except Exception as e:
-        logging.error(f"Error seeding database: {e}")
+    return [Testimonial(**t) for t in db_data.get("testimonials", []) if t.get("approved")]
 
 # ----- APP SETUP -----
 app.include_router(api_router)
@@ -163,9 +143,6 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("startup")
 async def startup_event():
-    await seed_database()
+    global db_data
+    db_data = load_data()
     logger.info("FufuDev Portfolio API started successfully!")
-
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
